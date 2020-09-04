@@ -1,8 +1,10 @@
 from AppView import AppView
+from AppModel import AppModel
 
 class AppController:
     def __init__(self):
         self.view = AppView()
+        self.model = AppModel()
 
     def start(self):
         self.dailyLog()
@@ -10,6 +12,6 @@ class AppController:
     def dailyLog(self):
         quit = False
         while not quit:
-            dateStr = self.view.promptDate()
-            print("you entered " + dateStr + "\n")
-            #TODO:  here's where the model would convert and validate the dateStr
+            dateStr = self.view.promptDate(self.model.getPrefDateFmt())
+            print(self.model.isDateValid(dateStr))
+
