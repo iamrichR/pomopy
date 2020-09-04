@@ -5,5 +5,11 @@ class AppController:
         self.view = AppView()
 
     def start(self):
-        res = self.view.sayHi()
-        print("You said " + res)
+        self.dailyLog()
+
+    def dailyLog(self):
+        quit = False
+        while not quit:
+            dateStr = self.view.promptDate()
+            print("you entered " + dateStr + "\n")
+            #TODO:  here's where the model would convert and validate the dateStr
