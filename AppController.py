@@ -1,8 +1,9 @@
-#AppController class#
+from AppView import AppView
 
 class AppController:
     def __init__(self):
-        self.x = 1
+        self.view = AppView()
 
     def start(self):
-        print('hello')
+        res = self.view.sayHi()
+        print("You said " + res)
