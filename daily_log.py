@@ -59,14 +59,15 @@ def promptTags(tags=[]):
 
 
 
+##########
+## MAIN ##
+##########
 
-## main ##
 dateStr = input("Please enter the date to be logged\nmm/dd/yy format\n")
 date = datetime.datetime.strptime(dateStr, '%m/%d/%y')
 jsonData = "{\n"
 
 print("\n")
-#jsonData += json.dumps(promptLog(date)) + ","
 jsonData += str(promptLog(date)) + "\n"
 
 more = input("\nDo you want to log another task for %s?\n" %dateStr)[0].upper()
