@@ -24,9 +24,15 @@ class AppController:
             #prompt task
             taskStr = self.view.promptTask()
             self.checkForQuit(taskStr)
+            if(self.model.taskAlreadyExists(taskStr)):
+                taskData = self.model.getTaskData(taskStr)
+                print(taskData)
+            else:
+                print("whoops couldn't find that task")
+                #TODO:  Make this a view method
 
-            #TODO:  Implement taskList in model
-            #TODO:  check taskStr against taskList in model
+            #TODO:  make a separate logic flow to account for creation of new tasks
+            #TODO:  implement the rest of the daily-log conversion    
 
     def checkForQuit(self, inputStr):
         if inputStr.upper() in self.quitCommands:
