@@ -32,7 +32,11 @@ class AppController:
                 #TODO:  Make this a view method
 
             #TODO:  make a separate logic flow to account for creation of new tasks
-            #TODO:  implement the rest of the daily-log conversion    
+            
+            #TODO:  once task is determined, prompt quantity
+
+            #TODO:  continue converting dailylog, next step is creating PomoLog object and storing
+
 
     def checkForQuit(self, inputStr):
         if inputStr.upper() in self.quitCommands:

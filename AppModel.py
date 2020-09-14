@@ -1,4 +1,6 @@
 import datetime
+import json
+from Task import Task
 
 class AppModel:
     def __init__(self):
@@ -25,7 +27,11 @@ class AppModel:
         taskList = []
         taskFile = open(self.taskFileName)
         for line in taskFile:
-            taskList.append(line.strip())
+            newTaskData = line.strip().split("|")
+            title = newTaskData[0].strip()
+            tags = json.loads(newTaskData[1].strip())
+            newTask = Task(title, tags)
+            taskList.append(newTask)
         taskFile.close()
         return taskList
 
