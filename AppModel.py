@@ -18,7 +18,7 @@ class AppModel:
             return False
     
     def getCurrentDate(self):
-        return self.currentDate
+        return self.currentDate.strftime(self.datetimeFmtRegex)
 
     def getPrefDateFmt(self):
         return self.prefDateFmt
@@ -35,13 +35,9 @@ class AppModel:
         taskFile.close()
         return taskList
 
-    def getTaskData(self,taskStr):
+    def getTaskData(self, taskStr):
         taskList = self.getTaskList()
-        return taskList[taskList.index(taskStr)]
-
-    def taskAlreadyExists(self, taskStr):
-        taskList = self.getTaskList()
-        if(taskStr in taskList):
-            return True
-        else:
-            return False
+        for task in taskList:
+            if task.title.upper() == taskStr:
+                return (True, task)
+        return (False, None)
