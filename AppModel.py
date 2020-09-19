@@ -1,13 +1,16 @@
 import datetime
 import json
 from Task import Task
+from PomoLog import PomoLog
 
 class AppModel:
     def __init__(self):
         self.prefDateFmt = "mm/dd/yy"
         self.datetimeFmtRegex = "%m/%d/%y"
-        self.currentDate = datetime.MINYEAR
         self.taskFileName = "./data/tasks.json"
+        self.logFileName = "./data/logs.dat"
+        self.currentDate = datetime.datetime.today()
+        self.currentTask = None
         #TODO:  Save taskList as a class variable and keep it updated instead of retrieving it over and over.
 
     def isDateValid(self, dateStr):
@@ -35,9 +38,24 @@ class AppModel:
         taskFile.close()
         return taskList
 
-    def getTaskData(self, taskStr):
+    def checkForTask(self, taskStr):
         taskList = self.getTaskList()
         for task in taskList:
             if task.title.upper() == taskStr:
-                return (True, task)
-        return (False, None)
+                self.currentTask = task
+                return True
+        return False
+
+    def getCurrentTask(self):
+        return self.currentTask
+
+    def storeDailyLog(self, quantity):
+        log = PomoLog(self.currentDate, self.currentTask, quantity)
+        #TODO:  implement a better storage solution later, with JSON(?)
+        logFile = open(self.logFileName, 'a')
+        logFile.write(str(log) + "\n")
+        logFile.close()
+
+    def resetDailyLogValues(self):
+        datetime.datetime.today()
+        self.currentTask = None

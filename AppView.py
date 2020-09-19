@@ -21,3 +21,10 @@ class AppView:
 
     def errTaskNotFound(self):
         print("That task was not found in the database")
+
+    def promptDailyLogContinue(self, dateStr):
+        print("\nWould you like to continue logging tasks for %s" % dateStr)
+        inputStr = input().upper()
+        return inputStr
+
+    
