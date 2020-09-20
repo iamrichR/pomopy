@@ -11,6 +11,7 @@ class AppModel:
         self.logFileName = "./data/logs.dat"
         self.currentDate = datetime.datetime.today()
         self.currentTask = None
+        self.currentQuantity = 0
         #TODO:  Save taskList as a class variable and keep it updated instead of retrieving it over and over.
 
     def isDateValid(self, dateStr):
@@ -25,6 +26,12 @@ class AppModel:
 
     def getPrefDateFmt(self):
         return self.prefDateFmt
+
+    def setCurrentQuantity(self, quantity):
+        self.currentQuantity = quantity
+
+    def getCurrentQuantity(self):
+        return self.currentQuantity
 
     def getTaskList(self):
         taskList = []
@@ -49,13 +56,16 @@ class AppModel:
     def getCurrentTask(self):
         return self.currentTask
 
-    def storeDailyLog(self, quantity):
-        log = PomoLog(self.currentDate, self.currentTask, quantity)
+    def storeDailyLog(self):
+        log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
         #TODO:  implement a better storage solution later, with JSON(?)
         logFile = open(self.logFileName, 'a')
         logFile.write(str(log) + "\n")
         logFile.close()
 
     def resetDailyLogValues(self):
-        datetime.datetime.today()
         self.currentTask = None
+        self.currentQuantity = 0
+
+    def resetDate(self):
+        self.currentDate = datetime.datetime.today()
