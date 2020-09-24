@@ -10,14 +10,15 @@ class AppController:
         self.noCommands = ["NO, Y"]
 
     def start(self):
+        #TODO:  make a main menu
         self.dailyLog()
 
     def dailyLog(self):
         quit = False
-        while not quit:
-            #TODO:  date entry should be BEFORE the loop
 
-            self.getValidDateInput()
+        self.getValidDateInput()
+
+        while not quit:
             self.getValidTaskInput()
             self.getValidQuantityInput()
 
@@ -32,10 +33,8 @@ class AppController:
 
             if more in self.noCommands:
                 #TODO:  this doesn't seem to be working properly
+                #TODO:  if no, return to main menu
                 exit()
-
-
-            #TODO:  loop daily log until user is done with that day
 
     def getValidDateInput(self):
             dateStr = self.view.promptDate(self.model.getPrefDateFmt())
