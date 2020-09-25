@@ -1,5 +1,6 @@
 import datetime
 import json
+from os import path
 from Task import Task
 from PomoLog import PomoLog
 
@@ -7,8 +8,8 @@ class AppModel:
     def __init__(self):
         self.prefDateFmt = "mm/dd/yy"
         self.datetimeFmtRegex = "%m/%d/%y"
-        self.taskFileName = "./data/tasks.json"
-        self.logFileName = "./data/logs.dat"
+        self.dataPath = "./data/"
+        self.taskFileName = self.dataPath+"tasks.json"
         self.currentDate = datetime.datetime.today()
         self.currentTask = None
         self.currentQuantity = 0
@@ -26,6 +27,9 @@ class AppModel:
 
     def getPrefDateFmt(self):
         return self.prefDateFmt
+
+    def getLogFileName(self):
+        return self.dataPath+(self.currentDate.strftime("%y%m%d")+"-pomo_log.dat")
 
     def setCurrentQuantity(self, quantity):
         self.currentQuantity = quantity
@@ -59,7 +63,8 @@ class AppModel:
     def storeDailyLog(self):
         log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
         #TODO:  implement a better storage solution later, with JSON(?)
-        logFile = open(self.logFileName, 'a')
+        logfileName = self.getLogFileName()
+        logFile = open(logfileName, 'a')
         logFile.write(str(log) + "\n")
         logFile.close()
 
