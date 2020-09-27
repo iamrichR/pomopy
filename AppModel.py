@@ -29,7 +29,7 @@ class AppModel:
         return self.prefDateFmt
 
     def getLogFileName(self):
-        return self.dataPath+(self.currentDate.strftime("%y%m%d")+"-pomo_log.dat")
+        return self.dataPath+(self.currentDate.strftime("%y%m%d")+"-pomo_log.json")
 
     def setCurrentQuantity(self, quantity):
         self.currentQuantity = quantity
@@ -65,7 +65,8 @@ class AppModel:
         #TODO:  implement a better storage solution later, with JSON(?)
         logfileName = self.getLogFileName()
         logFile = open(logfileName, 'a')
-        logFile.write(str(log) + "\n")
+        logFile.write(json.dumps(log.getData()) + "\n")
+        #logFile.write(str(log) + "\n")
         logFile.close()
 
     def resetDailyLogValues(self):
