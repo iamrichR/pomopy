@@ -51,6 +51,19 @@ class AppController:
         taskExists = self.model.checkForTask(taskStr)
         if not (taskExists):
             self.view.errTaskNotFound()
+            ynStr = self.view.promptNewTask(taskStr)
+            if(ynStr in self.yesCommands):
+                tagStr = self.view.promptTaskTags(taskStr)
+                if len(tagStr) == 0:
+                    self.view.errTagNeeded()
+                self.model.createNewTask(taskStr, tagStr)
+                tagStr = self.view.promptTaskTags(taskStr)
+                while not (len(tagStr) == 0):
+                    #TODO:  finish implementing this in the Model
+                    #TODO:  tasks should probably have numeric IDs for ease of use
+                    self.model.addTagtoTask(taskStr, tagStr)
+                    tagStr = self.view.promptTaskTags(taskStr)
+
             #TODO:  allow user to either return to task entry or create new task
             #TODO:  make a separate logic flow to account for creation of new tasks
 

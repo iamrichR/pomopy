@@ -60,6 +60,16 @@ class AppModel:
     def getCurrentTask(self):
         return self.currentTask
 
+    def createNewTask(self, title, tag):
+        newTask = Task(title, [tag])
+        #TODO:  change all file open/close statements to the "with..as" format, it's cleaner.
+        taskFile = open(self.taskFileName,'a')
+        taskFile.write(json.dumps(newTask.getData()) + "\n")
+        taskFile.close()
+
+    def addTagtoTask(self, title, tag):
+        #TODO:  open file and readlines, edit the line you need to edit, then rewrite all data back into the file.
+
     def storeDailyLog(self):
         log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
         #TODO:  implement a better storage solution later, with JSON(?)
