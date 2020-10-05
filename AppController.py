@@ -65,6 +65,7 @@ class AppController:
                     tagStr = self.view.promptTaskTags(taskStr)
                 self.model.setCurrentTask(self.model.checkForTask(taskStr))
             else:
+                print("hmmm")
                 #TODO:  what to do here if the user says no?
         else:
             self.model.setCurrentTask(existingTask)
