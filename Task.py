@@ -3,6 +3,8 @@ class Task:
         self.title = title
         self.tags = tags
     
+    def addTag(self, tag):
+        self.tags.append(tag)
     
     def __str__(self):
         #return "title:  " + str(self.title) + " | tags:  " + str(self.tags)

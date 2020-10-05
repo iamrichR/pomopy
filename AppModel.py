@@ -4,6 +4,8 @@ from os import path
 from Task import Task
 from PomoLog import PomoLog
 
+#TODO:  add commas into the task data file and read whole file at once as a json blob instead of doing json.loads line-by-line
+
 class AppModel:
     def __init__(self):
         self.prefDateFmt = "mm/dd/yy"
@@ -39,23 +41,20 @@ class AppModel:
 
     def getTaskList(self):
         taskList = []
-        taskFile = open(self.taskFileName)
-        for line in taskFile:
-            newTaskData = line.strip().split("|")
-            title = newTaskData[0].strip()
-            tags = json.loads(newTaskData[1].strip())
-            newTask = Task(title, tags)
-            taskList.append(newTask)
-        taskFile.close()
+        with open(self.taskFileName, 'r') as taskFile:
+            for line in taskFile.readlines():
+                taskList.append(json.loads(line))
         return taskList
 
     def checkForTask(self, taskStr):
         taskList = self.getTaskList()
         for task in taskList:
-            if task.title.upper() == taskStr:
-                self.currentTask = task
-                return True
-        return False
+            if task['title'] == taskStr:
+                return Task(task['title'], task['tags'])
+        return None
+
+    def setCurrentTask(self, task):
+        self.currentTask = task
 
     def getCurrentTask(self):
         return self.currentTask
@@ -63,21 +62,32 @@ class AppModel:
     def createNewTask(self, title, tag):
         newTask = Task(title, [tag])
         #TODO:  change all file open/close statements to the "with..as" format, it's cleaner.
-        taskFile = open(self.taskFileName,'a')
-        taskFile.write(json.dumps(newTask.getData()) + "\n")
-        taskFile.close()
+        with open(self.taskFileName,'a') as taskFile:
+            taskFile.write("\n" + json.dumps(newTask.getData()))
 
     def addTagtoTask(self, title, tag):
-        #TODO:  open file and readlines, edit the line you need to edit, then rewrite all data back into the file.
+        with open(self.taskFileName,'r') as taskFile:
+            taskLines = taskFile.readlines()
+            newWriteData = []
+            for line in taskLines:
+                task = json.loads(line)
+                if(task['title'] == title):
+                    editedTask = Task(task['title'], task['tags'])
+                    editedTask.addTag(tag)
+                    newWriteData.append(json.dumps(editedTask.getData()))
+                else:
+                    newWriteData.append(line)
+
+        with open(self.taskFileName,'w') as rewriteFile:
+            rewriteFile.writelines(newWriteData)
 
     def storeDailyLog(self):
         log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
         #TODO:  implement a better storage solution later, with JSON(?)
         logfileName = self.getLogFileName()
-        logFile = open(logfileName, 'a')
-        logFile.write(json.dumps(log.getData()) + "\n")
-        #logFile.write(str(log) + "\n")
-        logFile.close()
+        with open(logfileName, 'a') as logFile:
+            logFile.write(json.dumps(log.getData()) + "\n")
+            #logFile.write(str(log) + "\n")
 
     def resetDailyLogValues(self):
         self.currentTask = None

@@ -6,7 +6,7 @@ class AppController:
         self.view = AppView()
         self.model = AppModel()
         self.quitCommands = ["QUIT", "Q", "EXIT"]
-        self.yesCommands = ["YES, Y"]
+        self.yesCommands = ["YES", "Y"]
         self.noCommands = ["NO, Y"]
 
     def start(self):
@@ -48,9 +48,10 @@ class AppController:
         #TODO:  allow user to print tasklist if they want
         taskStr = self.view.promptTask()
         self.checkForQuit(taskStr)
-        taskExists = self.model.checkForTask(taskStr)
-        if not (taskExists):
+        existingTask = self.model.checkForTask(taskStr)
+        if existingTask is None:
             self.view.errTaskNotFound()
+            #TODO:  standard method to check Y/N input
             ynStr = self.view.promptNewTask(taskStr)
             if(ynStr in self.yesCommands):
                 tagStr = self.view.promptTaskTags(taskStr)
@@ -59,10 +60,14 @@ class AppController:
                 self.model.createNewTask(taskStr, tagStr)
                 tagStr = self.view.promptTaskTags(taskStr)
                 while not (len(tagStr) == 0):
-                    #TODO:  finish implementing this in the Model
                     #TODO:  tasks should probably have numeric IDs for ease of use
                     self.model.addTagtoTask(taskStr, tagStr)
                     tagStr = self.view.promptTaskTags(taskStr)
+                self.model.setCurrentTask(self.model.checkForTask(taskStr))
+            else:
+                #TODO:  what to do here if the user says no?
+        else:
+            self.model.setCurrentTask(existingTask)
 
             #TODO:  allow user to either return to task entry or create new task
             #TODO:  make a separate logic flow to account for creation of new tasks
