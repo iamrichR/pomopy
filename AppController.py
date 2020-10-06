@@ -7,7 +7,7 @@ class AppController:
         self.model = AppModel()
         self.quitCommands = ["QUIT", "Q", "EXIT"]
         self.yesCommands = ["YES", "Y"]
-        self.noCommands = ["NO, Y"]
+        self.noCommands = ["NO", "N"]
 
     def start(self):
         #TODO:  make a main menu
@@ -32,9 +32,9 @@ class AppController:
             self.checkForQuit(more)
 
             if more in self.noCommands:
-                #TODO:  this doesn't seem to be working properly
-                #TODO:  if no, return to main menu
-                exit()
+                quit = True
+        #TODO:V:  will eventually return to the main menu here, once there's a main menu
+        print("\n**\nend of program\n**\n")
 
     def getValidDateInput(self):
             dateStr = self.view.promptDate(self.model.getPrefDateFmt())
