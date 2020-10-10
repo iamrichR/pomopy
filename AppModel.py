@@ -4,13 +4,14 @@ from os import path
 from Task import Task
 from PomoLog import PomoLog
 
-#TODO:  add commas into the task data file and read whole file at once as a json blob instead of doing json.loads line-by-line
+#TODO:  change all file open/close statements to the "with..as" format, it's cleaner.
 
 class AppModel:
     def __init__(self):
         self.prefDateFmt = "mm/dd/yy"
         self.datetimeFmtRegex = "%m/%d/%y"
         self.dataPath = "./data/"
+        #TODO:  if tasks.json file does not exist, set it up
         self.taskFileName = self.dataPath+"tasks.json"
         self.currentDate = datetime.datetime.today()
         self.currentTask = None
@@ -39,11 +40,18 @@ class AppModel:
     def getCurrentQuantity(self):
         return self.currentQuantity
 
+    def getJSONDataFromFile(self, path):
+        with open(path, 'r') as dataSource:
+            data = dataSource.read()
+        try:
+            jsonData = json.loads(data)
+            return jsonData[]
+        except ValueError:
+            return None
+
     def getTaskList(self):
-        taskList = []
-        with open(self.taskFileName, 'r') as taskFile:
-            for line in taskFile.readlines():
-                taskList.append(json.loads(line))
+        fileData = self.getJSONDataFromFile(self.taskFileName)
+        tasklist = fileData['taskList']
         return taskList
 
     def checkForTask(self, taskStr):
@@ -61,9 +69,15 @@ class AppModel:
 
     def createNewTask(self, title, tag):
         newTask = Task(title, [tag])
-        #TODO:  change all file open/close statements to the "with..as" format, it's cleaner.
-        with open(self.taskFileName,'a') as taskFile:
-            taskFile.write("\n" + json.dumps(newTask.getData()))
+        self.storeNewTask(newTask)
+        
+
+    def storeNewTask(self, task):
+        fileData = self.getJSONDataFromFile(self.taskFileName)
+        fileData['taskList'].append(task.getData)
+
+        with open(self.taskFileName, 'w') as taskFile:
+            taskFile.write(json.dumps(fileData))
 
     def addTagtoTask(self, title, tag):
         with open(self.taskFileName,'r') as taskFile:
