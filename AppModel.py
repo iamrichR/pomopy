@@ -54,6 +54,10 @@ class AppModel:
         tasklist = fileData['taskList']
         return taskList
 
+    def updateTaskData(self, newTaskList):
+        with open(self.taskFileName, 'w') as taskFile:
+            taskFile.write(json.dumps(newTaskList))
+
     def checkForTask(self, taskStr):
         taskList = self.getTaskList()
         for task in taskList:
@@ -73,35 +77,32 @@ class AppModel:
         
 
     def storeNewTask(self, task):
-        fileData = self.getJSONDataFromFile(self.taskFileName)
-        fileData['taskList'].append(task.getData)
+        newTaskList = self.getTaskList().append(task.getData)
 
-        with open(self.taskFileName, 'w') as taskFile:
-            taskFile.write(json.dumps(fileData))
+        self.updateTaskData(newTaskList)
 
     def addTagtoTask(self, title, tag):
-        with open(self.taskFileName,'r') as taskFile:
-            taskLines = taskFile.readlines()
-            newWriteData = []
-            for line in taskLines:
-                task = json.loads(line)
-                if(task['title'] == title):
-                    editedTask = Task(task['title'], task['tags'])
-                    editedTask.addTag(tag)
-                    newWriteData.append(json.dumps(editedTask.getData()))
-                else:
-                    newWriteData.append(line)
+        taskList = self.getTaskList()
 
-        with open(self.taskFileName,'w') as rewriteFile:
-            rewriteFile.writelines(newWriteData)
+        for task in taskList:
+            if(task['title'] == title):
+                task['tags'].append(tag)
+        
+        self.updateTaskData(taskList)
 
+    #TODO:  instead of providing literal filename to this method, have the method take a date and find the appropriate logfile
+    def getLogData(self, path):
+        fileData = self.getJSONDataFromFile(path)
+        logData = fileData['logData']
+        return logData
+
+    #TODO:  update storeDailyLog() to match how taskFile updating is happening
+    #TODO:  methods needed:  getLogData(date), createDateLog(log), updateDateLog(log)
     def storeDailyLog(self):
         log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
-        #TODO:  implement a better storage solution later, with JSON(?)
         logfileName = self.getLogFileName()
         with open(logfileName, 'a') as logFile:
             logFile.write(json.dumps(log.getData()) + "\n")
-            #logFile.write(str(log) + "\n")
 
     def resetDailyLogValues(self):
         self.currentTask = None
