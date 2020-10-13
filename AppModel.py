@@ -49,14 +49,21 @@ class AppModel:
         except ValueError:
             return None
 
+    def updateFile(self, path, data):
+        with open(path, 'w') as writeFile:
+            writeFile.write(data)
+
+    def appendFile(self, path, data):
+        with open(path, 'a') as appendFile:
+            appendFile.write(data)
+
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
         tasklist = fileData['taskList']
         return taskList
 
     def updateTaskData(self, newTaskList):
-        with open(self.taskFileName, 'w') as taskFile:
-            taskFile.write(json.dumps(newTaskList))
+        self.updateFile(self.taskFileName, json.dumps(newTaskList))
 
     def checkForTask(self, taskStr):
         taskList = self.getTaskList()
@@ -96,8 +103,11 @@ class AppModel:
         logData = fileData['logData']
         return logData
 
+    def updateDateLog(self, log):
+        logfileName = self.getLogFileName()
+        self.appendFile(logfileName, json.dumps(log))
+
     #TODO:  update storeDailyLog() to match how taskFile updating is happening
-    #TODO:  methods needed:  getLogData(date), createDateLog(log), updateDateLog(log)
     def storeDailyLog(self):
         log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
         logfileName = self.getLogFileName()
