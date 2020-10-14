@@ -110,9 +110,7 @@ class AppModel:
     #TODO:  update storeDailyLog() to match how taskFile updating is happening
     def storeDailyLog(self):
         log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
-        logfileName = self.getLogFileName()
-        with open(logfileName, 'a') as logFile:
-            logFile.write(json.dumps(log.getData()) + "\n")
+        self.updateDateLog(log)
 
     def resetDailyLogValues(self):
         self.currentTask = None
