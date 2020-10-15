@@ -53,10 +53,6 @@ class AppModel:
         with open(path, 'w') as writeFile:
             writeFile.write(data)
 
-    def appendFile(self, path, data):
-        with open(path, 'a') as appendFile:
-            appendFile.write(data)
-
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
         tasklist = fileData['taskList']
@@ -105,7 +101,7 @@ class AppModel:
 
     def updateDateLog(self, log):
         logfileName = self.getLogFileName()
-        self.appendFile(logfileName, json.dumps(log))
+        self.updateFile(logfileName, json.dumps(log))
 
     #TODO:  update storeDailyLog() to match how taskFile updating is happening
     def storeDailyLog(self):
