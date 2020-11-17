@@ -45,7 +45,7 @@ class AppModel:
             data = dataSource.read()
         try:
             jsonData = json.loads(data)
-            return jsonData[]
+            return jsonData
         except ValueError:
             return None
 
@@ -55,7 +55,7 @@ class AppModel:
 
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
-        tasklist = fileData['taskList']
+        taskList = fileData['taskList']
         return taskList
 
     def updateTaskData(self, newTaskList):
@@ -99,14 +99,15 @@ class AppModel:
         logData = fileData['logData']
         return logData
 
-    def updateDateLog(self, log):
+    def updateDateLog(self, logData):
         logfileName = self.getLogFileName()
-        self.updateFile(logfileName, json.dumps(log))
+        self.updateFile(logfileName, json.dumps(logData))
 
     #TODO:  update storeDailyLog() to match how taskFile updating is happening
     def storeDailyLog(self):
-        log = PomoLog(self.currentDate, self.currentTask, self.currentQuantity)
-        self.updateDateLog(log)
+        log = PomoLog(self.currentDate.strftime("%m/%d/%y"), self.currentTask.__dict__, self.currentQuantity)
+        logData = log.__dict__
+        self.updateDateLog(logData)
 
     def resetDailyLogValues(self):
         self.currentTask = None
@@ -114,3 +115,11 @@ class AppModel:
 
     def resetDate(self):
         self.currentDate = datetime.datetime.today()
+
+
+
+
+
+# if __name__ == "__main__":
+#     model = AppModel()
+#     print(model.getJSONDataFromFile("./data/tasks.json"))
