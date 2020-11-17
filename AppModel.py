@@ -55,25 +55,22 @@ class AppModel:
 
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
-        if(isinstance(fileData, dict) and fileData.hasKey('taskList')):
+        if(isinstance(fileData, dict) and 'taskList' not in fileData):
             taskList = fileData['taskList']
             return taskList
         else:
-            print("empty task list detected")
             return None
 
     def updateTaskData(self, newTaskList):
-        self.updateFile(self.taskFileName, json.dumps(newTaskList))
+        self.updateFile(self.taskFileName, json.dumps({"taskList":newTaskList}))
 
     def checkForTask(self, taskStr):
         taskList = self.getTaskList()
-        if taskList is None:
-            return None
-        else:
+        if taskList is not None:
             for task in taskList:
                 if task['title'] == taskStr:
                     return Task(task['title'], task['tags'])
-            return None
+        return None
 
     def setCurrentTask(self, task):
         self.currentTask = task
@@ -89,9 +86,9 @@ class AppModel:
     def storeNewTask(self, task):
         oldTaskList = self.getTaskList()
         if oldTaskList is None:
-            newTaskList = [task.getData]
+            newTaskList = [task.getData()]
         else:
-            newTaskList = self.getTaskList().append(task.getData)
+            newTaskList = self.getTaskList().append(task.getData())
         self.updateTaskData(newTaskList)
 
     def addTagtoTask(self, title, tag):
