@@ -55,7 +55,9 @@ class AppModel:
 
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
-        if(isinstance(fileData, dict) and 'taskList' not in fileData):
+        print(isinstance(fileData, dict))
+        print(fileData)
+        if(isinstance(fileData, dict) and 'taskList' in fileData):
             taskList = fileData['taskList']
             return taskList
         else:
@@ -93,7 +95,7 @@ class AppModel:
 
     def addTagtoTask(self, title, tag):
         taskList = self.getTaskList()
-
+        print(taskList)
         for task in taskList:
             if(task['title'] == title):
                 task['tags'].append(tag)
@@ -131,6 +133,8 @@ class AppModel:
 
 
 
-# if __name__ == "__main__":
-#     model = AppModel()
-#     print(model.getJSONDataFromFile("./data/tasks.json"))
+if __name__ == "__main__":
+    model = AppModel()
+    newTask1 = Task("test_1", ["tag1", "shared-tag"])
+    newTask2 = Task("test_2", ["tag1", "shared-tag"])
+    model.storeNewTask(newTask2)
