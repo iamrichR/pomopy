@@ -1,6 +1,6 @@
 import datetime
 import json
-from os import path
+import os
 from Task import Task
 from PomoLog import PomoLog
 
@@ -55,18 +55,25 @@ class AppModel:
 
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
-        taskList = fileData['taskList']
-        return taskList
+        if(isinstance(fileData, dict) and fileData.hasKey('taskList')):
+            taskList = fileData['taskList']
+            return taskList
+        else:
+            print("empty task list detected")
+            return None
 
     def updateTaskData(self, newTaskList):
         self.updateFile(self.taskFileName, json.dumps(newTaskList))
 
     def checkForTask(self, taskStr):
         taskList = self.getTaskList()
-        for task in taskList:
-            if task['title'] == taskStr:
-                return Task(task['title'], task['tags'])
-        return None
+        if taskList is None:
+            return None
+        else:
+            for task in taskList:
+                if task['title'] == taskStr:
+                    return Task(task['title'], task['tags'])
+            return None
 
     def setCurrentTask(self, task):
         self.currentTask = task
@@ -80,8 +87,11 @@ class AppModel:
         
 
     def storeNewTask(self, task):
-        newTaskList = self.getTaskList().append(task.getData)
-
+        oldTaskList = self.getTaskList()
+        if oldTaskList is None:
+            newTaskList = [task.getData]
+        else:
+            newTaskList = self.getTaskList().append(task.getData)
         self.updateTaskData(newTaskList)
 
     def addTagtoTask(self, title, tag):
@@ -100,8 +110,12 @@ class AppModel:
         return logData
 
     def updateDateLog(self, logData):
+        logList = {"logData": []}
         logfileName = self.getLogFileName()
-        self.updateFile(logfileName, json.dumps(logData))
+        if(os.path.exists(logfileName)):
+            logList["logData"].append(self.getLogData(logfileName))
+        logList["logData"].append(logData)
+        self.updateFile(logfileName, json.dumps(logList))
 
     #TODO:  update storeDailyLog() to match how taskFile updating is happening
     def storeDailyLog(self):
