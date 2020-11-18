@@ -55,8 +55,6 @@ class AppModel:
 
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
-        print(isinstance(fileData, dict))
-        print(fileData)
         if(isinstance(fileData, dict) and 'taskList' in fileData):
             taskList = fileData['taskList']
             return taskList
@@ -90,12 +88,11 @@ class AppModel:
         if oldTaskList is None:
             newTaskList = [task.getData()]
         else:
-            newTaskList = self.getTaskList().append(task.getData())
+            newTaskList = oldTaskList + [(task.getData())]
         self.updateTaskData(newTaskList)
 
     def addTagtoTask(self, title, tag):
         taskList = self.getTaskList()
-        print(taskList)
         for task in taskList:
             if(task['title'] == title):
                 task['tags'].append(tag)
@@ -118,7 +115,7 @@ class AppModel:
 
     #TODO:  update storeDailyLog() to match how taskFile updating is happening
     def storeDailyLog(self):
-        log = PomoLog(self.currentDate.strftime("%m/%d/%y"), self.currentTask.__dict__, self.currentQuantity)
+        log = PomoLog(self.currentDate.strftime("%m/%d/%y"), self.currentTask.getData(), self.currentQuantity)
         logData = log.__dict__
         self.updateDateLog(logData)
 
@@ -133,8 +130,9 @@ class AppModel:
 
 
 
-if __name__ == "__main__":
-    model = AppModel()
-    newTask1 = Task("test_1", ["tag1", "shared-tag"])
-    newTask2 = Task("test_2", ["tag1", "shared-tag"])
-    model.storeNewTask(newTask2)
+# if __name__ == "__main__":
+#     model = AppModel()
+#     newTask1 = Task("test_1", ["tag1", "shared-tag"])
+#     newTask2 = Task("test_2", ["tag1", "shared-tag"])
+#     model.storeNewTask(newTask1)
+#     model.storeNewTask(newTask2)
