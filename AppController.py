@@ -23,7 +23,7 @@ class AppController:
             self.getValidQuantityInput()
 
             #TODO:  check for successful log and print a success or failure message
-            self.model.storeDailyLog()
+            self.model.createNewDailyLog()
             self.model.resetDailyLogValues()
 
             #add validation later, response should be either YES/Y or NO/N

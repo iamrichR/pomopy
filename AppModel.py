@@ -100,24 +100,34 @@ class AppModel:
         self.updateTaskData(taskList)
 
     #TODO:  instead of providing literal filename to this method, have the method take a date and find the appropriate logfile
-    def getLogData(self, path):
-        fileData = self.getJSONDataFromFile(path)
-        logData = fileData['logData']
-        return logData
+    def getLogList(self):
+        path = self.getLogFileName()
+        if(os.path.exists(path)):
+            fileData = self.getJSONDataFromFile(path)
+            logData = fileData['logs']
+            return logData
+        else:
+            return None
 
     def updateDateLog(self, logData):
-        logList = {"logData": []}
-        logfileName = self.getLogFileName()
-        if(os.path.exists(logfileName)):
-            logList["logData"].append(self.getLogData(logfileName))
-        logList["logData"].append(logData)
-        self.updateFile(logfileName, json.dumps(logList))
+        self.updateFile(self.getLogFileName(), json.dumps({"logs":logData}))
+
+    def createNewDailyLog(self):
+        log = PomoLog(
+            self.currentDate.strftime("%m/%d/%y"), 
+            self.currentTask.getData(), 
+            self.currentQuantity)
+        self.storeDailyLog(log)
 
     #TODO:  update storeDailyLog() to match how taskFile updating is happening
-    def storeDailyLog(self):
-        log = PomoLog(self.currentDate.strftime("%m/%d/%y"), self.currentTask.getData(), self.currentQuantity)
+    def storeDailyLog(self, log):
         logData = log.__dict__
-        self.updateDateLog(logData)
+        oldLogList = self.getLogList()
+        if(oldLogList is None):
+            newLogList = [logData]
+        else:
+            newLogList = oldLogList + [logData]
+        self.updateDateLog(newLogList)
 
     def resetDailyLogValues(self):
         self.currentTask = None
