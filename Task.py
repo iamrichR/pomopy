@@ -3,10 +3,15 @@ class Task:
         self.title = title
         self.tags = tags
     
+    def addTag(self, tag):
+        self.tags.append(tag)
     
     def __str__(self):
         #return "title:  " + str(self.title) + " | tags:  " + str(self.tags)
         return ("Title:  %s | Tags:  %s" % (str(self.title), str(self.tags)))
+
+    def getData(self):
+        return {"title": self.title, "tags": self.tags}
 
 
 
