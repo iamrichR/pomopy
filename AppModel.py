@@ -3,6 +3,7 @@ import json
 import os
 from Task import Task
 from PomoLog import PomoLog
+from FileManager import FileManager
 
 #TODO:  change all file open/close statements to the "with..as" format, it's cleaner.
 
@@ -16,6 +17,7 @@ class AppModel:
         self.currentDate = datetime.datetime.today()
         self.currentTask = None
         self.currentQuantity = 0
+        self.fileManager = FileManager()
         #TODO:  Save taskList as a class variable and keep it updated instead of retrieving it over and over.
 
     def isDateValid(self, dateStr):
@@ -40,18 +42,6 @@ class AppModel:
     def getCurrentQuantity(self):
         return self.currentQuantity
 
-    def getJSONDataFromFile(self, path):
-        with open(path, 'r') as dataSource:
-            data = dataSource.read()
-        try:
-            jsonData = json.loads(data)
-            return jsonData
-        except ValueError:
-            return None
-
-    def updateFile(self, path, data):
-        with open(path, 'w') as writeFile:
-            writeFile.write(data)
 
     def getTaskList(self):
         fileData = self.getJSONDataFromFile(self.taskFileName)
