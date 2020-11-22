@@ -71,6 +71,7 @@ class AppModel:
     def createNewTask(self, title, tag):
         newTask = Task(title, [tag])
         self.storeNewTask(newTask)
+        self.fileManager
         
 
     def storeNewTask(self, task):

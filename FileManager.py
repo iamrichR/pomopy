@@ -1,12 +1,13 @@
 import json
+import os
 
 class FileManager:
 
-    def __init__(self):
-        a = 1
+    # def __init__(self):
+    #     a = 1
 
     
-    def updateFile(self, path, data):
+    def __updateFile(self, path, data):
         with open(path, 'w') as writeFile:
             writeFile.write(data)
 
@@ -19,10 +20,10 @@ class FileManager:
         if oldData is not None:
             newData += oldData
         newData.append(newItem)
-        self.updateFile(path, json.dumps({listName:newData}))
+        self.__updateFile(path, json.dumps({listName:newData}))
 
     def fetchJSONList(self, path):
-        fileData = self.getJSONDataFromFile(path)
+        fileData = self.__getJSONDataFromFile(path)
         if(isinstance(fileData, dict) and len(fileData) > 0):
             first_item = list(fileData.values())[0]
             first_key = list(fileData.keys())[0]
@@ -30,7 +31,7 @@ class FileManager:
                 return (first_key, first_item)
         return None
 
-    def getJSONDataFromFile(self, path):
+    def __getJSONDataFromFile(self, path):
         with open(path, 'r') as dataSource:
             data = dataSource.read()
         try:
@@ -41,10 +42,26 @@ class FileManager:
 
 
 if __name__ == "__main__":
-    #TODO: make this a test whenever you add tests
-    file1 = "./emptyFile.json"
-    file2 = "./test.json"
-    fm = FileManager()
-
-    for n in range(5,100):
-        fm.updateJSONList(file2, n)
+    try:
+        #TODO: make this a test whenever you add tests
+        fm = FileManager()
+        filename1 = "./emptyFile.json"
+        filename2 = "./test.json"
+        for filename in (filename1, filename2):
+            if os.path.exists(filename):
+                os.remove(filename)
+        file1 = open(filename1, "w")
+        file1.close()
+        file2 = open(filename2,"w")
+        file2.write(json.dumps(fm))
+        file2.write(json.dumps({"testData":[1,2,3,4]}))
+        file2.close()
+        for n in range(5,100):
+            fm.updateJSONList(file2.name, n)
+        if(len(fm.fetchJSONList(filename2)) == 99):
+            print("test ran successfully")
+        else:
+            print("test failed, %s data written incorrectly" % (filename2))
+    except Exception as e:
+        print("test failed, error occurred.")
+        print("<" + str(e) + ">")
