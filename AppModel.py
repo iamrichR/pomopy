@@ -44,12 +44,8 @@ class AppModel:
 
 
     def getTaskList(self):
-        fileData = self.getJSONDataFromFile(self.taskFileName)
-        if(isinstance(fileData, dict) and 'taskList' in fileData):
-            taskList = fileData['taskList']
-            return taskList
-        else:
-            return None
+        (taskDict, taskList) = self.fileManager.fetchJSONList(self.taskFileName)
+        return taskList
 
     def updateTaskData(self, newTaskList):
         self.updateFile(self.taskFileName, json.dumps({"taskList":newTaskList}))
@@ -70,8 +66,8 @@ class AppModel:
 
     def createNewTask(self, title, tag):
         newTask = Task(title, [tag])
-        self.storeNewTask(newTask)
-        self.fileManager
+        # self.storeNewTask(newTask)
+        self.fileManager.updateJSONList(self.taskFileName, newTask.getData())
         
 
     def storeNewTask(self, task):
@@ -131,9 +127,19 @@ class AppModel:
 
 
 
-# if __name__ == "__main__":
-#     model = AppModel()
-#     newTask1 = Task("test_1", ["tag1", "shared-tag"])
-#     newTask2 = Task("test_2", ["tag1", "shared-tag"])
-#     model.storeNewTask(newTask1)
-#     model.storeNewTask(newTask2)
+if __name__ == "__main__":
+
+    def testCreateNewTask():
+        model = AppModel()
+        length = len(model.getTaskList())
+        print(len(model.getTaskList()))
+        model.createNewTask("test_1", "tag1")
+        model.createNewTask("test_2", "tag2")
+        newLength = len(model.getTaskList())
+        print(len(model.getTaskList()))
+        if length+2 == (newLength):
+            print("test successful")
+        else:
+            print("test failed")
+
+    testCreateNewTask()
