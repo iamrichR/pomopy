@@ -42,13 +42,9 @@ class AppModel:
     def getCurrentQuantity(self):
         return self.currentQuantity
 
-
     def getTaskList(self):
-        (taskDict, taskList) = self.fileManager.fetchJSONList(self.taskFileName)
+        (listName, taskList) = self.fileManager.fetchJSONList(self.taskFileName)
         return taskList
-
-    def updateTaskData(self, newTaskList):
-        self.updateFile(self.taskFileName, json.dumps({"taskList":newTaskList}))
 
     def checkForTask(self, taskStr):
         taskList = self.getTaskList()
@@ -66,55 +62,26 @@ class AppModel:
 
     def createNewTask(self, title, tag):
         newTask = Task(title, [tag])
-        # self.storeNewTask(newTask)
-        self.fileManager.updateJSONList(self.taskFileName, newTask.getData())
+        self.fileManager.addItemtoList(self.taskFileName, newTask.getData())
         
-
-    def storeNewTask(self, task):
-        oldTaskList = self.getTaskList()
-        if oldTaskList is None:
-            newTaskList = [task.getData()]
-        else:
-            newTaskList = oldTaskList + [(task.getData())]
-        self.updateTaskData(newTaskList)
-
     def addTagtoTask(self, title, tag):
         taskList = self.getTaskList()
         for task in taskList:
             if(task['title'] == title):
                 task['tags'].append(tag)
-        
-        self.updateTaskData(taskList)
+        self.fileManager.updateList(self.taskFileName, taskList)
 
     #TODO:  instead of providing literal filename to this method, have the method take a date and find the appropriate logfile
     def getLogList(self):
-        path = self.getLogFileName()
-        if(os.path.exists(path)):
-            fileData = self.getJSONDataFromFile(path)
-            logData = fileData['logs']
-            return logData
-        else:
-            return None
-
-    def updateDateLog(self, logData):
-        self.updateFile(self.getLogFileName(), json.dumps({"logs":logData}))
+        (listName, logList) = self.fileManager.fetchJSONList(self.getLogFileName())
+        return logList
 
     def createNewDailyLog(self):
         log = PomoLog(
             self.currentDate.strftime("%m/%d/%y"), 
             self.currentTask.getData(), 
             self.currentQuantity)
-        self.storeDailyLog(log)
-
-    #TODO:  update storeDailyLog() to match how taskFile updating is happening
-    def storeDailyLog(self, log):
-        logData = log.__dict__
-        oldLogList = self.getLogList()
-        if(oldLogList is None):
-            newLogList = [logData]
-        else:
-            newLogList = oldLogList + [logData]
-        self.updateDateLog(newLogList)
+        self.fileManager.addItemtoList(self.getLogFileName(), log.__dict__, "logs")
 
     def resetDailyLogValues(self):
         self.currentTask = None
